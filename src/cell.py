@@ -31,7 +31,7 @@ class Cell:
         x1 = (self._x1 + self._x2) // 2
         y1 = (self._y1 + self._y2) // 2
         x2 = (to_cell._x1 + to_cell._x2) // 2
-        y2 = (to_cell._x1 + to_cell._x2) // 2
+        y2 = (to_cell._y1 + to_cell._y2) // 2
         line = Line(Point(x1, y1), Point(x2, y2))
         if not self._win:
             return

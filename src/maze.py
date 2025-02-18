@@ -59,7 +59,7 @@ class Maze:
     def _animate(self):
         if self.win:
             self.win.redraw()
-        time.sleep(0.05)
+        time.sleep(0.03)
 
     def _break_entrance_and_exit(self):
         entrance: Cell = self._cells[0][0]
@@ -90,15 +90,18 @@ class Maze:
             next_cell: Cell = self._cells[i + next_dir[0]][j + next_dir[1]]
             current_cell: Cell = self._cells[i][j]
 
-            current_cell.has_right_wall = next_dir[0] == -1
-            current_cell.has_left_wall = next_dir[0] == 1
-            current_cell.has_top_wall = next_dir[1] == 1
-            current_cell.has_bottom_wall = next_dir[1] == -1
-
-            next_cell.has_right_wall = next_dir[0] == 1
-            next_cell.has_left_wall = next_dir[0] == -1
-            next_cell.has_top_wall = next_dir[1] == -1
-            next_cell.has_bottom_wall = next_dir[1] == 1
+            if next_dir[0] == 1:
+                current_cell.has_right_wall = False
+                next_cell.has_left_wall = False
+            elif next_dir[0] == -1:
+                next_cell.has_right_wall = False
+                current_cell.has_left_wall = False
+            elif next_dir[1] == 1:
+                current_cell.has_bottom_wall = False
+                next_cell.has_top_wall = False
+            else:
+                current_cell.has_top_wall = False
+                next_cell.has_top_wall = False
 
             self._animate()
             self._break_walls_r(i + next_dir[0], j + next_dir[1])
