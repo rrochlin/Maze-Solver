@@ -1,5 +1,7 @@
 import random
 import time
+from typing import Optional
+from colors import rainbow_colors
 
 from cell import Cell
 from UI import Window
@@ -14,7 +16,7 @@ class Maze:
         num_cols,
         cell_size_x,
         cell_size_y,
-        win: Window = None,
+        win: Optional[Window] = None,
         seed=None,
     ):
         if seed:
@@ -30,6 +32,18 @@ class Maze:
         self._break_walls_r(0, 0)
         self._break_entrance_and_exit()
         self._reset_cells_visited()
+        self.undo_color = self.pick_color()
+        self.new_color = True
+
+    def pick_color(self):
+        color = random.choice(rainbow_colors)
+        color2 = random.choice(rainbow_colors)
+        while True:
+            if self.new_color:
+                self.new_color = False
+                color = random.choice(rainbow_colors)
+                color2 = random.choice(rainbow_colors)
+            yield (color, color2)
 
     def _create_cells(self):
         self._cells = [
@@ -59,7 +73,7 @@ class Maze:
     def _animate(self):
         if self.win:
             self.win.redraw()
-        time.sleep(0.03)
+        time.sleep(0.003)
 
     def _break_entrance_and_exit(self):
         entrance: Cell = self._cells[0][0]
@@ -103,13 +117,14 @@ class Maze:
                 current_cell.has_top_wall = False
                 next_cell.has_top_wall = False
 
-            self._animate()
+            #self._animate()
             self._break_walls_r(i + next_dir[0], j + next_dir[1])
 
     def _reset_cells_visited(self):
         for row in self._cells:
             for cell in row:
                 cell.visited = False
+        self.new_color = True
 
     def solve(self):
         return self._solve_r(0, 0)
@@ -119,7 +134,8 @@ class Maze:
         cell = self._cells[i][j]
         cell.visited = True
         if i == len(self._cells) - 1 and j == len(self._cells[0]) - 1:
-            return True
+            pass
+            #return True
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
         for d in directions:
             if (
@@ -139,8 +155,8 @@ class Maze:
             ):
                 continue
             next_cell = self._cells[i + d[0]][j + d[1]]
-            cell.draw_move(next_cell)
+            cell.draw_move(next_cell, False, next(self.undo_color)[0], next(self.undo_color)[0])
             if self._solve_r(i + d[0], j + d[1]):
                 return True
-            cell.draw_move(next_cell, True)
+            cell.draw_move(next_cell, True, next(self.undo_color)[0], next(self.undo_color)[1])
         return False

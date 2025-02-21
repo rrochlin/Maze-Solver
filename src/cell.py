@@ -1,8 +1,9 @@
+from typing import Optional
 from UI import Line, Point, Window
-
+import random
 
 class Cell:
-    def __init__(self, x1, x2, y1, y2, window: Window = None):
+    def __init__(self, x1, x2, y1, y2, window: Optional[Window] = None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
@@ -11,7 +12,7 @@ class Cell:
         self._x2 = x2
         self._y1 = y1
         self._y2 = y2
-        self._win: Window = window
+        self._win: Optional[Window] = window
         self.visited = False
 
     def draw(self):
@@ -27,7 +28,7 @@ class Cell:
         top_line = Line(Point(x1, y1), Point(x2, y1))
         self._win.draw_line(top_line, "black" if self.has_top_wall else "white")
 
-    def draw_move(self, to_cell, undo=False):
+    def draw_move(self, to_cell, undo=False, normal_color="gray", undo_color="red"):
         x1 = (self._x1 + self._x2) // 2
         y1 = (self._y1 + self._y2) // 2
         x2 = (to_cell._x1 + to_cell._x2) // 2
@@ -35,4 +36,7 @@ class Cell:
         line = Line(Point(x1, y1), Point(x2, y2))
         if not self._win:
             return
-        self._win.draw_line(line, "red" if undo else "gray")
+        self._win.draw_line(line, undo_color if undo else normal_color)
+
+
+
